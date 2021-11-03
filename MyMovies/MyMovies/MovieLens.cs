@@ -6,25 +6,25 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class ActorDirectorsNames
+    class MovieLens
     {
         public static void ReadAsync()
         {
             var inputFileStrings = new BlockingCollection<string>();
-            var task1 = Downloader.LoadContentAsync(@"D:\data\ml-latest (1)\ml-latest\ActorsDirectorsNames_IMDB.txt", inputFileStrings);
-            var namesCodesDict = new ConcurrentDictionary<string, (string, string[])>();
-            var task2 = ProcessContentAsync(inputFileStrings, namesCodesDict, new char[] { '	' });
+            var task1 = Downloader.LoadContentAsync(@"D:\data\ml-latest (1)\ml-latest\links_IMDB_MovieLens.csv", inputFileStrings);
+            var dict = new ConcurrentDictionary<string, string>();
+            var task2 = ProcessContentAsync(inputFileStrings, dict, new char[] {','});
             task2.Wait();
         }
 
-        public static Task ProcessContentAsync(BlockingCollection<string> input, ConcurrentDictionary<string, (string, string[])> output, char[] spliters)
+        public static Task ProcessContentAsync(BlockingCollection<string> input, ConcurrentDictionary<string, string> output, char[] spliters)
         {
             return Task.Factory.StartNew(() =>
             {
                 foreach (var line in input.GetConsumingEnumerable())
                 {
                     string[] words = line.Split(spliters);
-                    output.AddOrUpdate(words[0], (words[1], words[5].Split(',')), ((x, y) => y));
+                    output.AddOrUpdate(words[0], $"tt{words[1]}", ((x, y) => y));
                 }
             }, TaskCreationOptions.LongRunning);
         }
