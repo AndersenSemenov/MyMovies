@@ -6,7 +6,8 @@ namespace MyMovies
     {
         static void Main(string[] args)
         {
-            Pipeline.ReadAsync();
+            //MovieCodes.ReadAsync();
+            ActorDirectorsNames.ReadAsync();
         }
     }
 }

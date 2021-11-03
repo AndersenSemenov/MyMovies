@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class Pipeline
+    class MovieCodes
     {
         public static void ReadAsync()
         {
-            var bc = new BlockingCollection<string>();
-            var task1 = Downloader.LoadContentAsync(@"D:\data\ml-latest (1)\ml-latest\MovieCodes_IMDB.tsv", bc);
-
-            var dict = new ConcurrentDictionary<string, string>();
-            var task2 = ProcessContentAsync(bc, dict, new char[] { ' ' });
+            var inputFileStrings = new BlockingCollection<string>();
+            var task1 = Downloader.LoadContentAsync(@"D:\data\ml-latest (1)\ml-latest\MovieCodes_IMDB.tsv", inputFileStrings);
+            //task1.Wait();
+            var movieDictionary = new ConcurrentDictionary<string, string>();
+            var task2 = ProcessContentAsync(inputFileStrings, movieDictionary, new char[] { '	' });
             task2.Wait();
-
+            //return await movieDictionary;
         }
 
         public static Task ProcessContentAsync(BlockingCollection<string> input, ConcurrentDictionary<string, string> output, char[] spliters)
@@ -27,7 +27,7 @@ namespace MyMovies
                 foreach (var line in input.GetConsumingEnumerable())
                 {
                     string[] words = line.Split(spliters);
-                    if (words[4] == "ru" || words[4] == "en")
+                    if (words[4] == "en") //words[4] == "ru" 
                     {
                        output.AddOrUpdate(words[0], words[2], ((x, y) => y));
                     }
