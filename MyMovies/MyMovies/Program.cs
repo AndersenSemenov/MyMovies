@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyMovies.Parser;
+using System;
 
 namespace MyMovies
 {
@@ -6,9 +7,7 @@ namespace MyMovies
     {
         static void Main(string[] args)
         {
-            //MovieCodes.ReadAsync();
-            //ActorDirectorCodes.ReadAsync();
-            MovieLens.ReadAsync();
+            Ratings.ReadAsync();
         }
     }
 }
