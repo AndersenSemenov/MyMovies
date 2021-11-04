@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyMovies.Parser;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
@@ -6,22 +7,22 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class ActorDirectorCodes
+    class ActorDirectorCodes: DataParser<string, HashSet<Actor>> // gets set of actors from the id of the movie
     {
-        public static void ReadAsync()
+        public ActorDirectorCodes(): base(new char[] { '	' }, @"D:\data\ml-latest (1)\ml-latest\ActorsDirectorsCodes_IMDB.tsv") { }
+
+        public override void ReadandGetData()
         {
-            var inputFileStrings = new BlockingCollection<string>();
-            var task1 = Downloader.LoadContentAsync(@"D:\data\ml-latest (1)\ml-latest\ActorsDirectorsCodes_IMDB.tsv", inputFileStrings);
-            var namesCodesDict = new ConcurrentDictionary<string, HashSet<Actor>>();
-            var task2 = ProcessContentAsync(inputFileStrings, namesCodesDict, new char[] { '	' });
+            var task1 = Downloader.LoadContentAsync(pathToTheData, inputFileStrings);
+            var task2 = ParseData();
             task2.Wait();
         }
 
-        public static Task ProcessContentAsync(BlockingCollection<string> input, ConcurrentDictionary<string, HashSet<Actor>> output, char[] spliters)
+        public override Task ParseData()
         {
             return Task.Factory.StartNew(() =>
             {
-                foreach (var line in input.GetConsumingEnumerable())
+                foreach (var line in inputFileStrings.GetConsumingEnumerable())
                 {
                     string[] words = line.Split(spliters);
                     output.AddOrUpdate(words[0], 

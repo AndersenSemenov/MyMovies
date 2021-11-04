@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyMovies.Parser;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
@@ -6,22 +7,22 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class MovieLens
+    class MovieLens: DataParser<string, string> // key --- movieID, value --- imdID
     {
-        public static void ReadAsync()
+        public MovieLens(): base(new char[] {','}, @"D:\data\ml-latest (1)\ml-latest\links_IMDB_MovieLens.csv") { }
+
+        public override void ReadandGetData()
         {
-            var inputFileStrings = new BlockingCollection<string>();
-            var task1 = Downloader.LoadContentAsync(@"D:\data\ml-latest (1)\ml-latest\links_IMDB_MovieLens.csv", inputFileStrings);
-            var dict = new ConcurrentDictionary<string, string>();
-            var task2 = ProcessContentAsync(inputFileStrings, dict, new char[] {','});
+            var task1 = Downloader.LoadContentAsync(pathToTheData, inputFileStrings);
+            var task2 = ParseData();
             task2.Wait();
         }
 
-        public static Task ProcessContentAsync(BlockingCollection<string> input, ConcurrentDictionary<string, string> output, char[] spliters)
+        public override Task ParseData()
         {
             return Task.Factory.StartNew(() =>
             {
-                foreach (var line in input.GetConsumingEnumerable())
+                foreach (var line in inputFileStrings.GetConsumingEnumerable())
                 {
                     string[] words = line.Split(spliters);
                     output.AddOrUpdate(words[0], $"tt{words[1]}", ((x, y) => y));

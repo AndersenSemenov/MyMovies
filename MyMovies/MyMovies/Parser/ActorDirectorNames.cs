@@ -1,15 +1,16 @@
-﻿using System;
+﻿using MyMovies.Parser;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyMovies.Parser
+namespace MyMovies
 {
-    class Ratings: DataParser<string, double> /// key --- imdbID, value --- rating
+    //REDO --- value is an Actor, is evth ok??
+    class ActorDirectorNames: DataParser<string, (string, string[])> // key --- actorID, value --- Actor
     {
-        public Ratings(): base(new char[] { '	' }, @"D:\data\ml-latest (1)\ml-latest\Ratings_IMDB.tsv") { }
+        public ActorDirectorNames(): base(new char[] { '	' }, @"D:\data\ml-latest (1)\ml-latest\ActorsDirectorsNames_IMDB.txt") { }
 
         public override void ReadandGetData()
         {
@@ -25,7 +26,7 @@ namespace MyMovies.Parser
                 foreach (var line in inputFileStrings.GetConsumingEnumerable())
                 {
                     string[] words = line.Split(spliters);
-                    output.AddOrUpdate(words[0], Convert.ToDouble(words[1].Replace('.', ',')), ((x, y) => y));
+                    output.AddOrUpdate(words[0], (words[1], words[5].Split(',')), ((x, y) => y));
                 }
             }, TaskCreationOptions.LongRunning);
         }

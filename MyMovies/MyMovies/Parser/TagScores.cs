@@ -7,22 +7,22 @@ using System.Threading.Tasks;
 
 namespace MyMovies.Parser
 {
-    class TagScores
+    class TagScores: DataParser<string, HashSet<Tag>> // key --- movieID, value --- set of tags for the movie
     {
-        public static void ReadAsync()
+        public TagScores(): base(new char[] { ',' }, @"D:\data\ml-latest (1)\ml-latest\TagScores_MovieLens.csv") { }
+
+        public override void ReadandGetData()
         {
-            var inputFileStrings = new BlockingCollection<string>();
-            var task1 = Downloader.LoadContentAsync(@"D:\data\ml-latest (1)\ml-latest\TagScores_MovieLens.csv", inputFileStrings);
-            var dict = new ConcurrentDictionary<string, HashSet<Tag>>();
-            var task2 = ProcessContentAsync(inputFileStrings, dict, new char[] { ',' });
+            var task1 = Downloader.LoadContentAsync(pathToTheData, inputFileStrings);
+            var task2 = ParseData();
             task2.Wait();
         }
 
-        public static Task ProcessContentAsync(BlockingCollection<string> input, ConcurrentDictionary<string, HashSet<Tag>> output, char[] spliters)
+        public override Task ParseData()
         {
             return Task.Factory.StartNew(() =>
             {
-                foreach (var line in input.GetConsumingEnumerable())
+                foreach (var line in inputFileStrings.GetConsumingEnumerable())
                 {
                     string[] words = line.Split(spliters);
                     var a = Convert.ToDouble(words[2].Replace('.', ','));
