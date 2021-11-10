@@ -7,9 +7,18 @@ namespace MyMovies
     class Movie
     {
         public string Name { get; private set; }
+        public double Rating { get; private set; }
         public HashSet<Actor> Actors { get; private set; }
         public Director Director { get; private set; }
         public HashSet<Tag> Tags { get; private set; }
-        public int Rate { get; private set; }
+
+        public Movie(string name, double rating, HashSet<Actor> actors, HashSet<Tag> tags)
+        {
+            Name = name;
+            Rating = rating;
+            Actors = actors;
+            Director = null;
+            Tags = tags;
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace MyMovies.Parser
 
         public virtual Task ReadandGetData()
         {
-            var task1 = Downloader.LoadContentAsync(pathToTheData, inputFileStrings);
+            var task = Downloader.LoadContentAsync(pathToTheData, inputFileStrings);
             return ParseData();
         }
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MyMovies
 {
     //REDO --- value is an Actor, is evth ok??
-    class ActorDirectorNames: DataParser<string, (string, string[])> // key --- actorID, value --- Actor
+    class ActorDirectorNames: DataParser<string, Actor> // key --- actorID, value --- Actor
     {
         public ActorDirectorNames(): base(new char[] { '	' }, @"D:\data\ml-latest (1)\ml-latest\ActorsDirectorsNames_IMDB.txt") { }
 
@@ -19,9 +19,10 @@ namespace MyMovies
                 foreach (var line in inputFileStrings.GetConsumingEnumerable())
                 {
                     string[] words = line.Split(spliters);
-                    output.AddOrUpdate(words[0], (words[1], words[5].Split(',')), ((x, y) => y));
+                    output.AddOrUpdate(words[0], new Actor(words[1]), ((x, y) => y));
                 }
             }, TaskCreationOptions.LongRunning);
         }
     }
 }
+//words[5].Split(',') - films

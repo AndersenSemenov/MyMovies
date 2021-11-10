@@ -7,11 +7,7 @@ namespace MyMovies
     {
         static void Main(string[] args)
         {
-            var act = new TagScores();
-            act.ReadandGetData();
-            int a = 45;
-            a++;
-            a++;
+            Process.GetDictionaries();
         }
     }
 }

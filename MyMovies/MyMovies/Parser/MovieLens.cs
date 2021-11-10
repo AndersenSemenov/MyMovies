@@ -18,7 +18,7 @@ namespace MyMovies
                 foreach (var line in inputFileStrings.GetConsumingEnumerable())
                 {
                     string[] words = line.Split(spliters);
-                    output.AddOrUpdate(words[0], $"tt{words[1]}", ((x, y) => y));
+                    output.AddOrUpdate($"tt{words[1]}", words[0], ((x, y) => y));
                 }
             }, TaskCreationOptions.LongRunning);
         }

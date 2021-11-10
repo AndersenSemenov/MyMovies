@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class MovieCodes: DataParser<string, string> // key --- IMDB_ID, value --- movieName
+    class MovieCodes : DataParser<string, Movie> // key --- IMDB_ID, value --- movieName
     {
-        public MovieCodes(): base(new char[] { '	' }, @"D:\data\ml-latest (1)\ml-latest\MovieCodes_IMDB.tsv") { }
+        public MovieCodes() : base(new char[] { '	' }, @"D:\data\ml-latest (1)\ml-latest\MovieCodes_IMDB.tsv") { }
 
         protected override Task ParseData()
         {
@@ -19,12 +19,18 @@ namespace MyMovies
                 foreach (var line in inputFileStrings.GetConsumingEnumerable())
                 {
                     string[] words = line.Split(spliters);
-                    if (words[4] == "en") //words[4] == "ru" 
+                    if (words[4] == "en")
                     {
-                       output.AddOrUpdate(words[0], words[2], ((x, y) => y));
+                        var movie = Process.Method(words[0], words[2]);
+                        output.AddOrUpdate(words[2], movie, ((x, y) => y));
                     }
                 }
             }, TaskCreationOptions.LongRunning);
         }
+
+        //public Task ParseData(ActorDirectorCodes actorDirectorCodes, ActorDirectorNames actorDirectorNames, )
+        //{
+
+        //}
     }
 }
