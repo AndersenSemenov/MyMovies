@@ -8,18 +8,11 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class MovieCodes: DataParser<string, string> // key --- movieID, value --- movieName
+    class MovieCodes: DataParser<string, string> // key --- IMDB_ID, value --- movieName
     {
         public MovieCodes(): base(new char[] { '	' }, @"D:\data\ml-latest (1)\ml-latest\MovieCodes_IMDB.tsv") { }
 
-        public override void ReadandGetData()
-        {
-            var task1 = Downloader.LoadContentAsync(pathToTheData, inputFileStrings);
-            var task2 = ParseData();
-            task2.Wait();
-        }
-
-        public override Task ParseData()
+        protected override Task ParseData()
         {
             return Task.Factory.StartNew(() =>
             {

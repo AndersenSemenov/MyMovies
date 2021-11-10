@@ -12,14 +12,7 @@ namespace MyMovies
     {
         public ActorDirectorNames(): base(new char[] { '	' }, @"D:\data\ml-latest (1)\ml-latest\ActorsDirectorsNames_IMDB.txt") { }
 
-        public override void ReadandGetData()
-        {
-            var task1 = Downloader.LoadContentAsync(pathToTheData, inputFileStrings);
-            var task2 = ParseData();
-            task2.Wait();
-        }
-
-        public override Task ParseData()
+        protected override Task ParseData()
         {
             return Task.Factory.StartNew(() =>
             {

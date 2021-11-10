@@ -2,8 +2,8 @@
 {
     public class Tag
     {
-        public int Value { get; private set; } 
-        public Tag(int value)
+        public string Value { get; private set; } 
+        public Tag(string value)
         {
             Value = value;
         }

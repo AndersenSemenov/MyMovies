@@ -7,18 +7,11 @@ using System.Threading.Tasks;
 
 namespace MyMovies.Parser
 {
-    class TagScores: DataParser<string, HashSet<Tag>> // key --- movieID, value --- set of tags for the movie
+    class TagScores: DataParser<string, HashSet<int>> // key --- movieID, value --- set of tag_Ids for the movie
     {
         public TagScores(): base(new char[] { ',' }, @"D:\data\ml-latest (1)\ml-latest\TagScores_MovieLens.csv") { }
 
-        public override void ReadandGetData()
-        {
-            var task1 = Downloader.LoadContentAsync(pathToTheData, inputFileStrings);
-            var task2 = ParseData();
-            task2.Wait();
-        }
-
-        public override Task ParseData()
+        protected override Task ParseData()
         {
             return Task.Factory.StartNew(() =>
             {
@@ -29,10 +22,10 @@ namespace MyMovies.Parser
                     if (Convert.ToDouble(words[2].Replace('.', ',')) >= 0.5)
                     {
                         output.AddOrUpdate(words[0],
-                            new HashSet<Tag>(new Tag[] { new Tag(Convert.ToInt32(words[1])) }),
+                            new HashSet<int>(Convert.ToInt32(words[1])),
                             (x, y) =>
                             {
-                                y.Add(new Tag(Convert.ToInt32(words[1])));
+                                y.Add(Convert.ToInt32(words[1]));
                                 return y;
                             });
                         
