@@ -14,7 +14,7 @@ namespace MyMovies
             using (FileStream stream = File.OpenRead(path))
             {
                 var reader = new StreamReader(stream);
-                var firstLine = reader.ReadLine();
+                //var firstLine = reader.ReadLine();
                 string line = null;
                 while ((line = await reader.ReadLineAsync()) != null)
                 {

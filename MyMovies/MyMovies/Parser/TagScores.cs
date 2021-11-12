@@ -18,7 +18,6 @@ namespace MyMovies.Parser
                 foreach (var line in inputFileStrings.GetConsumingEnumerable())
                 {
                     string[] words = line.Split(spliters);
-                    var a = Convert.ToDouble(words[2].Replace('.', ','));
                     if (Convert.ToDouble(words[2].Replace('.', ',')) >= 0.5)
                     {
                         output.AddOrUpdate(words[0],

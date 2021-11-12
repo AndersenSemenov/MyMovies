@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class MovieCodes : DataParser<string, Movie> // key --- IMDB_ID, value --- movieName
+    class MovieCodes : DataParser<string, Movie> // key --- IMDB_ID, value --- movie
     {
         public MovieCodes() : base(new char[] { '	' }, @"D:\data\ml-latest (1)\ml-latest\MovieCodes_IMDB.tsv") { }
 
@@ -22,7 +22,7 @@ namespace MyMovies
                     if (words[4] == "en")
                     {
                         var movie = Process.Method(words[0], words[2]);
-                        output.AddOrUpdate(words[2], movie, ((x, y) => y));
+                        output.AddOrUpdate(words[0], movie, ((x, y) => y));
                     }
                 }
             }, TaskCreationOptions.LongRunning);

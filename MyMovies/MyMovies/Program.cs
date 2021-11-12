@@ -7,7 +7,9 @@ namespace MyMovies
     {
         static void Main(string[] args)
         {
-            Process.GetDictionaries();
+            ActorDirectorNames a = new ActorDirectorNames();
+            a.ReadandGetData().Wait();
+            //Process.GetDictionaries();
         }
     }
 }
