@@ -9,55 +9,64 @@ namespace MyMovies
 {
     static class Process
     {
-        private static ActorDirectorCodes actorDirectorCodes = new ActorDirectorCodes();
-        private static ActorDirectorNames actorDirectorNames = new ActorDirectorNames();
-        private static MovieLens movieLens = new MovieLens();
-        private static Ratings ratings = new Ratings();
-        private static TagCodes tagCodes = new TagCodes();
-        private static TagScores tagScores = new TagScores();
-        private static MovieCodes movieCodes = new MovieCodes();
+        public static ActorDirectorCodes actorDirectorCodes = new ActorDirectorCodes();
+        public static ActorDirectorNames actorDirectorNames = new ActorDirectorNames();
+        public static MovieLens movieLens = new MovieLens();
+        public static Ratings ratings = new Ratings();
+        public static TagCodes tagCodes = new TagCodes();
+        public static TagScores tagScores = new TagScores();
+        public static MovieCodes movieCodes = new MovieCodes();
 
         public static void GetDictionaries()
         {
-            Task task1 = actorDirectorCodes.ReadandGetData();
-            Task task2 = actorDirectorNames.ReadandGetData();
-            Task task3 = movieLens.ReadandGetData();
-            Task task4 = ratings.ReadandGetData();
-            Task task5 = tagCodes.ReadandGetData();
-            Task task6 = tagScores.ReadandGetData();
+            Task task1 = Task.Run(() => actorDirectorNames.ReadandGetData());
+            Task task2 = Task.Run(() => ratings.ReadandGetData());
+            Task task3 = Task.Run(() => tagCodes.ReadandGetData());
+            task1.Wait();
+            task3.Wait();
 
-            Task t = Task.WhenAll(
-                new Task[] {task1, task2, task3, task4, task5, task6});
+            Task task11 = Task.Run(() => actorDirectorCodes.ReadandGetData());
+            Task task33 = Task.Run(() => movieLens.ReadandGetData()); //????????
+            task33.Wait();
 
-            t.Wait();
+            Task task333 = Task.Run(() => tagScores.ReadandGetData());
 
-            Task task7 = movieCodes.ReadandGetData();//t.ContinueWith(x => movieCodes.ReadandGetData());
-            task7.Wait();
+            bool aa= true;
+            bool ca = false;
+            int aaa = 5;
+
+            Task.WaitAll(task11, task2, task333);
+
+            bool a = true;
+            bool c = false;
+            int aaaa = 5;
+            //Task task7 = movieCodes.ReadandGetData();
+            //task7.Wait();
 
 
-            Task t8 = Task.Run(() =>
-            {
-                actorDirectorNames.secondDict.Select(x => x.Value.Select(y => movieCodes.output[y]));
-            });
+            //Task t8 = Task.Run(() =>
+            //{
+            //    actorDirectorNames.secondDict.Select(x => x.Value.Select(y => movieCodes.dict[y]));
+            //});
             
         }
 
-        public static Movie Method(string IMDB_Id, string movieName)
-        {
-            double rating = ratings.output.ContainsKey(IMDB_Id) ? ratings.output[IMDB_Id] : 0;
-            HashSet<Actor> actors = new HashSet<Actor>();
-            if (actorDirectorCodes.output.ContainsKey(IMDB_Id))
-            {
-                actors = 
-                    actorDirectorCodes.output[IMDB_Id].Select(x => actorDirectorNames.output.ContainsKey(x) ? actorDirectorNames.output[x] : null).ToHashSet<Actor>(); //овнокод
-            }
-            HashSet<Tag> tags = new HashSet<Tag>();
-            if (movieLens.output.ContainsKey(IMDB_Id) && tagScores.output.ContainsKey(movieLens.output[IMDB_Id]))
-            {
-                tags = tagScores.output[movieLens.output[IMDB_Id]].Select(x => tagCodes.output[x]).ToHashSet<Tag>();
-            }
-            return new Movie(movieName, rating, actors, tags);
-        }
+        //public static Movie Method(string IMDB_Id, string movieName)
+        //{
+        //    double rating = ratings.dict.ContainsKey(IMDB_Id) ? ratings.dict[IMDB_Id] : 0;
+        //    HashSet<Actor> actors = new HashSet<Actor>();
+        //    if (actorDirectorCodes.dict.ContainsKey(IMDB_Id))
+        //    {
+        //        actors = 
+        //            actorDirectorCodes.dict[IMDB_Id].Select(x => actorDirectorNames.dict.ContainsKey(x) ? actorDirectorNames.dict[x] : null).ToHashSet<Actor>(); //овнокод
+        //    }
+        //    HashSet<Tag> tags = new HashSet<Tag>();
+        //    if (movieLens.dict.ContainsKey(IMDB_Id) && tagScores.dict.ContainsKey(movieLens.dict[IMDB_Id]))
+        //    {
+        //        tags = tagScores.dict[movieLens.dict[IMDB_Id]].Select(x => tagCodes.dict[x]).ToHashSet<Tag>();
+        //    }
+        //    return new Movie(movieName, rating, actors, tags);
+        //}
     }
 }
 

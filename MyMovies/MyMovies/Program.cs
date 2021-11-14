@@ -1,5 +1,6 @@
 ﻿using MyMovies.Parser;
 using System;
+using System.Text.RegularExpressions; //?
 
 namespace MyMovies
 {
@@ -7,8 +8,8 @@ namespace MyMovies
     {
         static void Main(string[] args)
         {
-            ActorDirectorNames a = new ActorDirectorNames();
-            a.ReadandGetData().Wait();
+            MovieCodes a = new MovieCodes();
+            a.ReadandGetData();
             //Process.GetDictionaries();
         }
     }

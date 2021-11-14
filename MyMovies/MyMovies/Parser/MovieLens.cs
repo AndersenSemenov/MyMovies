@@ -9,18 +9,15 @@ namespace MyMovies
 {
     class MovieLens: DataParser<string, string> // key --- movieID, value --- imdID
     {
-        public MovieLens(): base(new char[] {','}, @"D:\data\ml-latest (1)\ml-latest\links_IMDB_MovieLens.csv") { }
+        public MovieLens(): base(',', @"D:\data\ml-latest (1)\ml-latest\links_IMDB_MovieLens.csv") { }
 
-        protected override Task ParseData()
+        protected override void ParseData()
         {
-            return Task.Factory.StartNew(() =>
+            foreach (var line in inputFileStrings.GetConsumingEnumerable())
             {
-                foreach (var line in inputFileStrings.GetConsumingEnumerable())
-                {
-                    string[] words = line.Split(spliters);
-                    output.AddOrUpdate($"tt{words[1]}", words[0], ((x, y) => y));
-                }
-            }, TaskCreationOptions.LongRunning);
+                string[] words = line.Split(spliter);
+                dict.AddOrUpdate(words[0], $"tt{words[1]}", ((x, y) => y));
+            }
         }
     }
 }

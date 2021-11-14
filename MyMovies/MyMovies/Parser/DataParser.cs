@@ -10,23 +10,23 @@ namespace MyMovies.Parser
     abstract class DataParser<T1, T2>
     {
         protected BlockingCollection<string> inputFileStrings;
-        public ConcurrentDictionary<T1, T2> output;
-        protected char[] spliters;
+        public ConcurrentDictionary<T1, T2> dict;
+        protected char spliter;
         protected string pathToTheData;
 
-        public virtual Task ReadandGetData()
+        public virtual void ReadandGetData()
         {
             var task = Downloader.LoadContentAsync(pathToTheData, inputFileStrings);
-            return ParseData();
+            ParseData();
         }
 
-        protected abstract Task ParseData();
+        protected abstract void ParseData();
 
-        public DataParser(char[] split, string path)
+        public DataParser(char split, string path)
         {
             inputFileStrings = new BlockingCollection<string>();
-            output = new ConcurrentDictionary<T1, T2>();
-            spliters = split; 
+            dict = new ConcurrentDictionary<T1, T2>();
+            spliter = split; 
             pathToTheData = path;
         }
     }

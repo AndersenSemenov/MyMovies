@@ -9,18 +9,18 @@ namespace MyMovies.Parser
 {
     class Ratings: DataParser<string, double> /// key --- imdbID, value --- rating
     {
-        public Ratings(): base(new char[] { '	' }, @"D:\data\ml-latest (1)\ml-latest\Ratings_IMDB.tsv") { }
+        public Ratings(): base('\t', @"D:\data\ml-latest (1)\ml-latest\Ratings_IMDB.tsv") { }
 
-        protected override Task ParseData()
+        protected override void ParseData()
         {
-            return Task.Factory.StartNew(() =>
+            foreach (var line in inputFileStrings.GetConsumingEnumerable())
             {
-                foreach (var line in inputFileStrings.GetConsumingEnumerable())
+                string[] words = line.Split(spliter);
+                if (words[0] != "tconst")
                 {
-                    string[] words = line.Split(spliters);
-                    output.AddOrUpdate(words[0], Convert.ToDouble(words[1].Replace('.', ',')), ((x, y) => y));
+                    dict.AddOrUpdate(words[0], Convert.ToDouble(words[1].Replace('.', ',')), ((x, y) => y));
                 }
-            }, TaskCreationOptions.LongRunning);
+            }
         }
     }
 }

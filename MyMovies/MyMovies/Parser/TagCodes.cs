@@ -9,18 +9,18 @@ namespace MyMovies.Parser
 {
     class TagCodes: DataParser<int, Tag> // key --- tagID, value --- tag
     {
-        public TagCodes(): base(new char[] { ',' }, @"D:\data\ml-latest (1)\ml-latest\TagCodes_MovieLens.csv") { }
+        public TagCodes(): base(',', @"D:\data\ml-latest (1)\ml-latest\TagCodes_MovieLens.csv") { }
 
-        protected override Task ParseData()
+        protected override void ParseData()
         {
-            return Task.Factory.StartNew(() =>
+            foreach (var line in inputFileStrings.GetConsumingEnumerable()) ///// 
             {
-                foreach (var line in inputFileStrings.GetConsumingEnumerable())
+                string[] words = line.Split(spliter);
+                if (words[0] != "tagId")
                 {
-                    string[] words = line.Split(spliters);
-                    output.AddOrUpdate(Convert.ToInt32(words[0]), new Tag(words[1]), ((x, y) => y));
+                    dict.AddOrUpdate(Convert.ToInt32(words[0]), new Tag(words[1]), ((x, y) => y));
                 }
-            }, TaskCreationOptions.LongRunning);
+            }
         }
     }
 }

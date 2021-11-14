@@ -7,30 +7,29 @@ using System.Threading.Tasks;
 
 namespace MyMovies.Parser
 {
-    class TagScores: DataParser<string, HashSet<int>> // key --- movieID, value --- set of tag_Ids for the movie
+    class TagScores: DataParser<string, HashSet<Tag>> // key --- movieID, value --- set of tag_Ids for the movie
     {
-        public TagScores(): base(new char[] { ',' }, @"D:\data\ml-latest (1)\ml-latest\TagScores_MovieLens.csv") { }
+        public TagScores(): base(',', @"D:\data\ml-latest (1)\ml-latest\TagScores_MovieLens.csv") { }
 
-        protected override Task ParseData()
+        protected override void ParseData()
         {
-            return Task.Factory.StartNew(() =>
+            foreach (var line in inputFileStrings.GetConsumingEnumerable())
             {
-                foreach (var line in inputFileStrings.GetConsumingEnumerable())
+                string[] words = line.Split(spliter);
+                if (Convert.ToDouble(words[2].Replace('.', ',')) >= 0.5)
                 {
-                    string[] words = line.Split(spliters);
-                    if (Convert.ToDouble(words[2].Replace('.', ',')) >= 0.5)
-                    {
-                        output.AddOrUpdate(words[0],
-                            new HashSet<int>(Convert.ToInt32(words[1])),
-                            (x, y) =>
-                            {
-                                y.Add(Convert.ToInt32(words[1]));
-                                return y;
-                            });
-                        
-                    }
+                    var key = Process.movieLens.dict[words[0]];
+                    var value = Process.tagCodes.dict[Convert.ToInt32(words[1])];
+                    dict.AddOrUpdate(key,
+                        new HashSet<Tag>(new Tag[] { value }),
+                        (x, y) =>
+                        {
+                            y.Add(value);
+                            return y;
+                        });
+
                 }
-            }, TaskCreationOptions.LongRunning);
+            }
         }
     }
 }
