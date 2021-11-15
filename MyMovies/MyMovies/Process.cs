@@ -22,16 +22,14 @@ namespace MyMovies
             Task task1 = Task.Run(() => actorDirectorNames.ReadandGetData());
             Task task2 = Task.Run(() => ratings.ReadandGetData());
             Task task3 = Task.Run(() => tagCodes.ReadandGetData());
-            task1.Wait();
-            task3.Wait();
+            //Task.WaitAll(task1, task2, task3);
 
-            Task task11 = Task.Run(() => actorDirectorCodes.ReadandGetData());
-            Task task33 = Task.Run(() => movieLens.ReadandGetData()); //????????
-            task33.Wait();
+            Task task11 = task1.ContinueWith(x => actorDirectorCodes.ReadandGetData());
+            Task task33 = task3.ContinueWith(x => movieLens.ReadandGetData());
 
-            Task task333 = Task.Run(() => tagScores.ReadandGetData());
+            Task task333 = task33.ContinueWith(x => tagScores.ReadandGetData());
 
-            bool aa= true;
+            bool aa = true;
             bool ca = false;
             int aaa = 5;
 
@@ -40,15 +38,17 @@ namespace MyMovies
             bool a = true;
             bool c = false;
             int aaaa = 5;
-            //Task task7 = movieCodes.ReadandGetData();
-            //task7.Wait();
+            Task task7 = Task.Run(() => movieCodes.ReadandGetData());
+            task7.Wait();
 
-
+            bool q = true;
+            bool s = false;
+            int asd = 5;
             //Task t8 = Task.Run(() =>
             //{
             //    actorDirectorNames.secondDict.Select(x => x.Value.Select(y => movieCodes.dict[y]));
             //});
-            
+
         }
 
         //public static Movie Method(string IMDB_Id, string movieName)

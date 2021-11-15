@@ -17,7 +17,7 @@ namespace MyMovies
         {
             foreach (var line in inputFileStrings.GetConsumingEnumerable())
             {
-                Regex regex = new Regex(".*\ten\t.*");
+                Regex regex = new Regex("\ben\b");
                 MatchCollection matches = regex.Matches(line);
                 if (matches.Count != 0)
                 {
@@ -27,10 +27,15 @@ namespace MyMovies
 
                     var IMDB_Id = line.Substring(0, 9);
                     var movieName = line.Substring(secondIndex + 1, thirdIndex - secondIndex - 1);
-                    var rating = Process.ratings.dict[IMDB_Id];
-                    var actors = Process.actorDirectorCodes.dict[IMDB_Id];
-                    var tags = Process.tagScores.dict[IMDB_Id];
-                    dict.AddOrUpdate(IMDB_Id, new Movie(movieName, rating, actors, tags), (x, y) => y);
+                    if (Process.tagScores.dict.ContainsKey(IMDB_Id) 
+                        && Process.ratings.dict.ContainsKey(IMDB_Id) 
+                        && Process.actorDirectorCodes.dict.ContainsKey(IMDB_Id))
+                    {
+                        var rating = Process.ratings.dict[IMDB_Id];
+                        var actors = Process.actorDirectorCodes.dict[IMDB_Id];
+                        var tags = Process.tagScores.dict[IMDB_Id];
+                        dict.AddOrUpdate(IMDB_Id, new Movie(movieName, rating, actors, tags), (x, y) => y);
+                    }
                 }
             }
         }

@@ -8,9 +8,11 @@ namespace MyMovies
     {
         static void Main(string[] args)
         {
-            MovieCodes a = new MovieCodes();
-            a.ReadandGetData();
-            //Process.GetDictionaries();
+            //ActorDirectorCodes a = new ActorDirectorCodes();
+            //a.ReadandGetData();
+            //int q = 5;
+            //q++;
+            Process.GetDictionaries();
         }
     }
 }

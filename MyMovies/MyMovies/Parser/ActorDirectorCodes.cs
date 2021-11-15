@@ -15,17 +15,22 @@ namespace MyMovies
         {
             foreach (var line in inputFileStrings.GetConsumingEnumerable())
             {
-                var index = line.IndexOf(spliter);
-                var IMDB_Id = line.Substring(0, 9);
-                var actor_Id = line.Substring(index + 3, 9);
-                dict.AddOrUpdate(IMDB_Id,
+                var firstIndex = line.IndexOf(spliter);
+                var secondIndex = line.IndexOf(spliter, firstIndex + 1);
+                var thirdIndex = line.IndexOf(spliter, secondIndex + 1);
+                var IMDB_Id = line.Substring(0, firstIndex);
+                var actor_Id = line.Substring(secondIndex + 1, thirdIndex - secondIndex - 1);
+
+                if (Process.actorDirectorNames.dict.ContainsKey(actor_Id))
+                {
+                    dict.AddOrUpdate(IMDB_Id,
                     new HashSet<Actor>(new Actor[] { Process.actorDirectorNames.dict[actor_Id] }),
                     (x, y) =>
                     {
                         y.Add(Process.actorDirectorNames.dict[actor_Id]);
                         return y;
                     });
-
+                }
             }
         }
     }
