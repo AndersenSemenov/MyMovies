@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class MovieLens: DataParser<string, string> // key --- movieID, value --- imdID
+    class MovieLens: DataParser<string, string> // key --- movieID, value --- imdbID
     {
         public MovieLens(): base(',', @"D:\data\ml-latest (1)\ml-latest\links_IMDB_MovieLens.csv") { }
 

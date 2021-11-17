@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class ActorDirectorCodes: DataParser<string, HashSet<Actor>> // gets set of actors from the id of the movie
+    class ActorDirectorCodes: DataParser<string, HashSet<Person>> // gets set of actors and director from the id of the movie
     {
-        public ConcurrentDictionary<string, Director> directorDict = new ConcurrentDictionary<string, Director>();
+        public ConcurrentDictionary<string, Person> directorDict = new ConcurrentDictionary<string, Person>();
         public ActorDirectorCodes(): base('\t', @"D:\data\ml-latest (1)\ml-latest\ActorsDirectorsCodes_IMDB.tsv") { }
 
         protected override void ParseData()
@@ -31,10 +31,10 @@ namespace MyMovies
                     if (Process.actorDirectorNames.dict.ContainsKey(actor_Id))
                     {
                         dict.AddOrUpdate(IMDB_Id,
-                        new HashSet<Actor>(new Actor[] { new Actor(Process.actorDirectorNames.dict[actor_Id])}),
+                        new HashSet<Person>(new Person[] { Process.actorDirectorNames.dict[actor_Id] }),
                         (x, y) =>
                         {
-                            y.Add(new Actor(Process.actorDirectorNames.dict[actor_Id]));
+                            y.Add(Process.actorDirectorNames.dict[actor_Id]);
                             return y;
                         });
                     }
@@ -46,7 +46,7 @@ namespace MyMovies
 
                     if (Process.actorDirectorNames.dict.ContainsKey(director_Id))
                     {
-                        directorDict.AddOrUpdate(IMDB_Id, new Director(Process.actorDirectorNames.dict[director_Id]), (x, y) => y);
+                        directorDict.AddOrUpdate(IMDB_Id, Process.actorDirectorNames.dict[director_Id], (x, y) => y);
                     }
                 }
             }

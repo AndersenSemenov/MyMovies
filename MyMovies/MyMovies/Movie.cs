@@ -8,11 +8,11 @@ namespace MyMovies
     {
         public string Name { get; private set; }
         public double Rating { get; private set; }
-        public HashSet<Actor> Actors { get; private set; }
-        public Director Director { get; private set; }
+        public HashSet<Person> Actors { get; private set; }
+        public Person Director { get; private set; }
         public HashSet<Tag> Tags { get; private set; }
 
-        public Movie(string name, double rating, HashSet<Actor> actors, Director director, HashSet<Tag> tags)
+        public Movie(string name, double rating, HashSet<Person> actors, Person director, HashSet<Tag> tags)
         {
             Name = name;
             Rating = rating;

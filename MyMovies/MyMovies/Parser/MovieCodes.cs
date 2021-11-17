@@ -15,11 +15,10 @@ namespace MyMovies
 
         protected override void ParseData()
         {
+            Regex regex = new Regex("\ten|ru\t");
             foreach (var line in inputFileStrings.GetConsumingEnumerable())
-            {
-
-                var index = line.IndexOf("\ten\t");
-                if (index != -1)
+            {  
+                if (regex.IsMatch(line))
                 {
                     var firstIndex = line.IndexOf(spliter);
                     var secondIndex = line.IndexOf(spliter, firstIndex + 1);
@@ -31,11 +30,12 @@ namespace MyMovies
                         && Process.ratings.dict.ContainsKey(IMDB_Id)
                         && Process.actorDirectorCodes.dict.ContainsKey(IMDB_Id))
                     {
-                        Director director = Process.actorDirectorCodes.directorDict.ContainsKey(IMDB_Id) 
+                        var director = Process.actorDirectorCodes.directorDict.ContainsKey(IMDB_Id) 
                             ? Process.actorDirectorCodes.directorDict[IMDB_Id] : null;
 
                         dict.AddOrUpdate(IMDB_Id,
-                            new Movie(movieName,
+                            new Movie
+                            (movieName,
                             Process.ratings.dict[IMDB_Id],
                             Process.actorDirectorCodes.dict[IMDB_Id],
                             director,

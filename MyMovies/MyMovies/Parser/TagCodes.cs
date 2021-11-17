@@ -13,7 +13,7 @@ namespace MyMovies.Parser
 
         protected override void ParseData()
         {
-            foreach (var line in inputFileStrings.GetConsumingEnumerable()) ///// 
+            foreach (var line in inputFileStrings.GetConsumingEnumerable())
             {
                 string[] words = line.Split(spliter);
                 if (words[0] != "tagId")

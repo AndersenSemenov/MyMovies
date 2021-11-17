@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class ActorDirectorNames: DataParser<string, string> // key --- actorID, value --- Actor
+    class ActorDirectorNames: DataParser<string, Person> // key --- personId, value --- Person
     {
         public ActorDirectorNames(): base('\t', @"D:\data\ml-latest (1)\ml-latest\ActorsDirectorsNames_IMDB.txt") { }
 
@@ -23,9 +23,9 @@ namespace MyMovies
                     var secondIndex = line.IndexOf(spliter, firstIndex + 1);
 
                     var personId = line.Substring(0, firstIndex);
-                    var personName = line.Substring(firstIndex + 1, secondIndex - firstIndex - 1); 
+                    var person = new Person(line.Substring(firstIndex + 1, secondIndex - firstIndex - 1)); 
 
-                    dict.AddOrUpdate(personId, personName, ((x, y) => y));
+                    dict.AddOrUpdate(personId, person, ((x, y) => y));
                 }
             }
         }

@@ -8,10 +8,6 @@ namespace MyMovies
     {
         static void Main(string[] args)
         {
-            //ActorDirectorCodes a = new ActorDirectorCodes();
-            //a.ReadandGetData();
-            //int q = 5;
-            //q++;
             Process.GetDictionaries();
         }
     }
