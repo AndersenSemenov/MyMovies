@@ -12,12 +12,12 @@ namespace MyMovies
         public Director Director { get; private set; }
         public HashSet<Tag> Tags { get; private set; }
 
-        public Movie(string name, double rating, HashSet<Actor> actors, HashSet<Tag> tags)
+        public Movie(string name, double rating, HashSet<Actor> actors, Director director, HashSet<Tag> tags)
         {
             Name = name;
             Rating = rating;
             Actors = actors;
-            Director = null;
+            Director = director;
             Tags = tags;
         }
     }

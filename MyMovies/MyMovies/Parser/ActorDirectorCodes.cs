@@ -9,27 +9,45 @@ namespace MyMovies
 {
     class ActorDirectorCodes: DataParser<string, HashSet<Actor>> // gets set of actors from the id of the movie
     {
+        public ConcurrentDictionary<string, Director> directorDict = new ConcurrentDictionary<string, Director>();
         public ActorDirectorCodes(): base('\t', @"D:\data\ml-latest (1)\ml-latest\ActorsDirectorsCodes_IMDB.tsv") { }
 
         protected override void ParseData()
         {
             foreach (var line in inputFileStrings.GetConsumingEnumerable())
             {
+
                 var firstIndex = line.IndexOf(spliter);
                 var secondIndex = line.IndexOf(spliter, firstIndex + 1);
                 var thirdIndex = line.IndexOf(spliter, secondIndex + 1);
-                var IMDB_Id = line.Substring(0, firstIndex);
-                var actor_Id = line.Substring(secondIndex + 1, thirdIndex - secondIndex - 1);
+                var fourthIndex = line.IndexOf(spliter, thirdIndex + 1);
 
-                if (Process.actorDirectorNames.dict.ContainsKey(actor_Id))
+                var category = line.Substring(thirdIndex + 1, fourthIndex - thirdIndex - 1);
+                if (category == "actor")
                 {
-                    dict.AddOrUpdate(IMDB_Id,
-                    new HashSet<Actor>(new Actor[] { Process.actorDirectorNames.dict[actor_Id] }),
-                    (x, y) =>
+                    var IMDB_Id = line.Substring(0, firstIndex);
+                    var actor_Id = line.Substring(secondIndex + 1, thirdIndex - secondIndex - 1);
+
+                    if (Process.actorDirectorNames.dict.ContainsKey(actor_Id))
                     {
-                        y.Add(Process.actorDirectorNames.dict[actor_Id]);
-                        return y;
-                    });
+                        dict.AddOrUpdate(IMDB_Id,
+                        new HashSet<Actor>(new Actor[] { new Actor(Process.actorDirectorNames.dict[actor_Id])}),
+                        (x, y) =>
+                        {
+                            y.Add(new Actor(Process.actorDirectorNames.dict[actor_Id]));
+                            return y;
+                        });
+                    }
+                }
+                else if (category == "director")
+                {
+                    var IMDB_Id = line.Substring(0, firstIndex);
+                    var director_Id = line.Substring(secondIndex + 1, thirdIndex - secondIndex - 1);
+
+                    if (Process.actorDirectorNames.dict.ContainsKey(director_Id))
+                    {
+                        directorDict.AddOrUpdate(IMDB_Id, new Director(Process.actorDirectorNames.dict[director_Id]), (x, y) => y);
+                    }
                 }
             }
         }
