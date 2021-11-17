@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,10 @@ namespace MyMovies
         public static TagScores tagScores = new TagScores();
         public static MovieCodes movieCodes = new MovieCodes();
 
+        public static ConcurrentDictionary<string, Movie> firstDictionary = new ConcurrentDictionary<string, Movie>();
+        public static ConcurrentDictionary<Actor, HashSet<Movie>> secondDictionary = new ConcurrentDictionary<Actor, HashSet<Movie>>();
+        public static ConcurrentDictionary<Tag, HashSet<Movie>> thirdDictionary = new ConcurrentDictionary<Tag, HashSet<Movie>>();
+
         public static void GetDictionaries()
         {
             Task task1 = Task.Run(() => actorDirectorNames.ReadandGetData());
@@ -33,11 +38,48 @@ namespace MyMovies
             Task task7 = Task.Run(() => movieCodes.ReadandGetData());
             task7.Wait();
 
-            Task t8 = Task.Run(() => // ??? 
+            Task getFirstDictionary = Task.Run(() => // 1 словарь 
             {
-                actorDirectorNames.secondDict.Select(x => x.Value.Select(y => movieCodes.dict[y]));
+                Parallel.ForEach(movieCodes.dict, item =>
+                {
+                    firstDictionary.AddOrUpdate(item.Value.Name, item.Value, (x, y) => y);
+                });
+            });
+            getFirstDictionary.Wait();
+
+            Task getSecondDictionary = Task.Run(() =>
+            {
+                foreach(var item in firstDictionary)
+                {
+                    foreach(var actor in item.Value.Actors)
+                    {
+                        secondDictionary.AddOrUpdate(actor, new HashSet<Movie>(new Movie[] { item.Value }),
+                            (x, y) =>
+                            {
+                                y.Add(item.Value);
+                                return y;
+                            });
+                    }
+                }
             });
 
+            Task getThirdDictionary = Task.Run(() =>
+            {
+                foreach(var item in firstDictionary)
+                {
+                    foreach(var tag in item.Value.Tags)
+                    {
+                        thirdDictionary.AddOrUpdate(tag, new HashSet<Movie>(new Movie[] { item.Value }),
+                            (x, y) =>
+                            {
+                                y.Add(item.Value);
+                                return y;
+                            });
+                    }
+                }
+            });
+
+            Task.WaitAll(getSecondDictionary, getThirdDictionary);
         }
     }
 }
