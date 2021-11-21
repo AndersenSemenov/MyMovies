@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class MovieCodes : DataParser<string, Movie> // key --- IMDB_ID, value --- movie
+    class MovieCodes : DataParser<string, Movie> // key --- movieName, value --- movie
     {
         public MovieCodes() : base('\t', @"D:\data\ml-latest (1)\ml-latest\MovieCodes_IMDB.tsv") { }
 
@@ -33,7 +33,7 @@ namespace MyMovies
                         var director = Process.actorDirectorCodes.directorDict.ContainsKey(IMDB_Id) 
                             ? Process.actorDirectorCodes.directorDict[IMDB_Id] : null;
 
-                        dict.AddOrUpdate(IMDB_Id,
+                        dict.AddOrUpdate(movieName,
                             new Movie
                             (movieName,
                             Process.ratings.dict[IMDB_Id],

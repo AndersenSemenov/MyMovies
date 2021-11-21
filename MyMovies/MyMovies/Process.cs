@@ -38,14 +38,7 @@ namespace MyMovies
             Task movieCodesTask = Task.Run(() => movieCodes.ReadandGetData());
             movieCodesTask.Wait();
 
-            Task getFirstDictionary = Task.Run(() => 
-            {
-                Parallel.ForEach(movieCodes.dict, item =>
-                {
-                    firstDictionary.AddOrUpdate(item.Value.Name, item.Value, (x, y) => y);
-                });
-            });
-            getFirstDictionary.Wait();
+            firstDictionary = movieCodes.dict;
 
             Task getSecondDictionary = Task.Run(() =>
             {
