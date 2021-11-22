@@ -87,6 +87,15 @@ namespace MyMovies
             });
 
             Task.WaitAll(getSecondDictionary, getDirectorDictionary, getThirdDictionary);
+
+            using (var db = new ApplicationContext())
+            {
+                foreach (var movie in firstDictionary)
+                {
+                    db.Movies.Add(movie.Value);
+                }
+                db.SaveChanges();
+            }
         }
     }
 }

@@ -35,7 +35,8 @@ namespace MyMovies
 
                         dict.AddOrUpdate(movieName,
                             new Movie
-                            (movieName,
+                            (IMDB_Id,
+                            movieName,
                             Process.ratings.dict[IMDB_Id],
                             Process.actorDirectorCodes.dict[IMDB_Id],
                             director,
