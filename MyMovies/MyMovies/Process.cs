@@ -20,6 +20,7 @@ namespace MyMovies
 
         public static ConcurrentDictionary<string, Movie> firstDictionary = new ConcurrentDictionary<string, Movie>();
         public static ConcurrentDictionary<Person, HashSet<Movie>> secondDictionary = new ConcurrentDictionary<Person, HashSet<Movie>>();
+        public static ConcurrentDictionary<Person, HashSet<Movie>> directorDictionary = new ConcurrentDictionary<Person, HashSet<Movie>>();
         public static ConcurrentDictionary<Tag, HashSet<Movie>> thirdDictionary = new ConcurrentDictionary<Tag, HashSet<Movie>>();
 
         public static void GetDictionaries()
@@ -56,6 +57,19 @@ namespace MyMovies
                 }
             });
 
+            Task getDirectorDictionary = Task.Run(() =>
+            {
+                foreach (var item in firstDictionary)
+                {
+                    directorDictionary.AddOrUpdate(item.Value.Director, new HashSet<Movie>(new Movie[] { item.Value }),
+                        (x, y) =>
+                        {
+                            y.Add(item.Value);
+                            return y;
+                        });
+                }
+            });
+
             Task getThirdDictionary = Task.Run(() =>
             {
                 foreach(var item in firstDictionary)
@@ -72,7 +86,7 @@ namespace MyMovies
                 }
             });
 
-            Task.WaitAll(getSecondDictionary, getThirdDictionary);
+            Task.WaitAll(getSecondDictionary, getDirectorDictionary, getThirdDictionary);
         }
     }
 }
