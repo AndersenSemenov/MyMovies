@@ -15,6 +15,7 @@ namespace MyMovies
 
         public ApplicationContext()
         {
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 

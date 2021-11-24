@@ -40,12 +40,20 @@ namespace MyMovies
             movieCodesTask.Wait();
 
             firstDictionary = movieCodes.dict;
+            HashSet<string> ids = new HashSet<string>();
+
+            foreach (var item in firstDictionary)
+            {
+                ids.Add(item.Value.Id);
+            }
+            int a = 4;
+            a++;
 
             Task getSecondDictionary = Task.Run(() =>
             {
-                foreach(var item in firstDictionary)
+                foreach (var item in firstDictionary)
                 {
-                    foreach(var actor in item.Value.Actors)
+                    foreach (var actor in item.Value.Actors)
                     {
                         secondDictionary.AddOrUpdate(actor, new HashSet<Movie>(new Movie[] { item.Value }),
                             (x, y) =>
@@ -61,20 +69,23 @@ namespace MyMovies
             {
                 foreach (var item in firstDictionary)
                 {
-                    directorDictionary.AddOrUpdate(item.Value.Director, new HashSet<Movie>(new Movie[] { item.Value }),
+                    if (item.Value.Director != null)
+                    {
+                        directorDictionary.AddOrUpdate(item.Value.Director, new HashSet<Movie>(new Movie[] { item.Value }),
                         (x, y) =>
                         {
                             y.Add(item.Value);
                             return y;
                         });
+                    }
                 }
             });
 
             Task getThirdDictionary = Task.Run(() =>
             {
-                foreach(var item in firstDictionary)
+                foreach (var item in firstDictionary)
                 {
-                    foreach(var tag in item.Value.Tags)
+                    foreach (var tag in item.Value.Tags)
                     {
                         thirdDictionary.AddOrUpdate(tag, new HashSet<Movie>(new Movie[] { item.Value }),
                             (x, y) =>
@@ -88,14 +99,18 @@ namespace MyMovies
 
             Task.WaitAll(getSecondDictionary, getDirectorDictionary, getThirdDictionary);
 
-            using (var db = new ApplicationContext())
+            using (var context = new ApplicationContext())
             {
+                context.Database.EnsureCreated();
+
                 foreach (var movie in firstDictionary)
                 {
-                    db.Movies.Add(movie.Value);
+                    context.Movies.Add(movie.Value);
                 }
-                db.SaveChanges();
+                context.SaveChanges();
             }
+            int aa = 5;
+            a++;
         }
     }
 }

@@ -16,6 +16,8 @@ namespace MyMovies
         protected override void ParseData()
         {
             Regex regex = new Regex("\ten|ru\t");
+            Regex regexEn = new Regex("\ten\t");
+
             foreach (var line in inputFileStrings.GetConsumingEnumerable())
             {  
                 if (regex.IsMatch(line))
@@ -33,15 +35,20 @@ namespace MyMovies
                         var director = Process.actorDirectorCodes.directorDict.ContainsKey(IMDB_Id) 
                             ? Process.actorDirectorCodes.directorDict[IMDB_Id] : null;
 
-                        dict.AddOrUpdate(movieName,
+                        if (!dict.ContainsKey(IMDB_Id) ||
+                             dict.ContainsKey(IMDB_Id) && movieName != dict[IMDB_Id].Name)
+                        {
+                            
+                            dict.AddOrUpdate(IMDB_Id + (regexEn.IsMatch(line) ? "en" : "ru"),
                             new Movie
-                            (IMDB_Id,
+                            (IMDB_Id + (regexEn.IsMatch(line) ? "en" : "ru"),
                             movieName,
                             Process.ratings.dict[IMDB_Id],
                             Process.actorDirectorCodes.dict[IMDB_Id],
                             director,
-                            Process.tagScores.dict[IMDB_Id]), 
+                            Process.tagScores.dict[IMDB_Id]),
                             (x, y) => y);
+                        }
                     }
                 }
             }

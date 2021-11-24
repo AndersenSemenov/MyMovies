@@ -1,8 +1,14 @@
-﻿namespace MyMovies
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MyMovies
 {
     public class Tag
     {
-        public string Value { get; private set; }
+        [Key]
+        public string Value { get; set; }
+
+        public Tag() { }
+
         public Tag(string value)
             => Value = value;
     }

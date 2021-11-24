@@ -8,12 +8,14 @@ namespace MyMovies
     class Movie
     {
         [Key]
-        public string Id { get; private set; }
-        public string Name { get; private set; }
-        public double Rating { get; private set; }
-        public HashSet<Person> Actors { get; private set; }
-        public Person Director { get; private set; }
-        public HashSet<Tag> Tags { get; private set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public double Rating { get; set; }
+        public HashSet<Person> Actors { get; set; }
+        public Person Director { get; set; }
+        public HashSet<Tag> Tags { get; set; }
+
+        public Movie() { }
 
         public Movie(string id, string name, double rating, HashSet<Person> actors, Person director, HashSet<Tag> tags)
         {

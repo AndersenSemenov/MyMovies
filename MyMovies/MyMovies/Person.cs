@@ -10,10 +10,11 @@ namespace MyMovies
     public class Person
     {
         [Key]
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         //public HashSet<Movie> actorMovies { get; set; }
 
+        public Person() { }
 
         public Person(string name)
             => Name = name;
