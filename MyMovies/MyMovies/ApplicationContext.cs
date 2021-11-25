@@ -21,7 +21,7 @@ namespace MyMovies
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=Movies;Trusted_Connection=True;");
+            optionsBuilder.EnableSensitiveDataLogging().UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=Movies;Trusted_Connection=True;");
         }
     }
 }

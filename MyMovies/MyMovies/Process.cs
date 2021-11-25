@@ -101,13 +101,10 @@ namespace MyMovies
 
             using (var context = new ApplicationContext())
             {
-                context.Database.EnsureCreated();
-
                 foreach (var movie in firstDictionary)
                 {
                     context.Movies.Add(movie.Value);
                 }
-                context.SaveChanges();
             }
             int aa = 5;
             a++;
