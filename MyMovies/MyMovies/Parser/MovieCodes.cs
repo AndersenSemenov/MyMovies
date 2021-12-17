@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class MovieCodes : DataParser<string, Movie> // key --- movieName, value --- movie
+    class MovieCodes : DataParser<string, Movie> // key --- IMDB_Id, value --- movie
     {
         public MovieCodes() : base('\t', @"D:\data\ml-latest (1)\ml-latest\MovieCodes_IMDB.tsv") { }
 

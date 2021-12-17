@@ -14,12 +14,9 @@ namespace MyMovies
         public DbSet<Director> Directors { get; set; }
         public DbSet<Tag> Tags { get; set; }
 
-        public ApplicationContext(bool flag)
+        public ApplicationContext()
         {
-            if (flag)
-            {
-                Database.EnsureDeleted();
-            }
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 

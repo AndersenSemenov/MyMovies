@@ -91,7 +91,12 @@ namespace MyMovies
 
             Task.WaitAll(getSecondDictionary, getDirectorDictionary, getThirdDictionary);
 
-            using (var context = new ApplicationContext(true))
+            Parallel.ForEach(firstDictionary, item =>
+            {
+                item.Value.GetTopTen();
+            });
+
+            using (var context = new ApplicationContext())
             {
                 foreach (var movie in firstDictionary)
                 {
