@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace MyMovies
 {
@@ -6,6 +7,7 @@ namespace MyMovies
     {
         [Key]
         public string Value { get; set; }
+        public HashSet<Movie> Movies { get; set; }
 
         public Tag() { }
 

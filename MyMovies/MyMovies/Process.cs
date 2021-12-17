@@ -19,8 +19,8 @@ namespace MyMovies
         public static MovieCodes movieCodes = new MovieCodes();
 
         public static ConcurrentDictionary<string, Movie> firstDictionary = new ConcurrentDictionary<string, Movie>();
-        public static ConcurrentDictionary<Person, HashSet<Movie>> secondDictionary = new ConcurrentDictionary<Person, HashSet<Movie>>();
-        public static ConcurrentDictionary<Person, HashSet<Movie>> directorDictionary = new ConcurrentDictionary<Person, HashSet<Movie>>();
+        public static ConcurrentDictionary<Actor, HashSet<Movie>> secondDictionary = new ConcurrentDictionary<Actor, HashSet<Movie>>();
+        public static ConcurrentDictionary<Director, HashSet<Movie>> directorDictionary = new ConcurrentDictionary<Director, HashSet<Movie>>();
         public static ConcurrentDictionary<Tag, HashSet<Movie>> thirdDictionary = new ConcurrentDictionary<Tag, HashSet<Movie>>();
 
         public static void GetDictionaries()
@@ -40,14 +40,6 @@ namespace MyMovies
             movieCodesTask.Wait();
 
             firstDictionary = movieCodes.dict;
-            HashSet<string> ids = new HashSet<string>();
-
-            foreach (var item in firstDictionary)
-            {
-                ids.Add(item.Value.Id);
-            }
-            int a = 4;
-            a++;
 
             Task getSecondDictionary = Task.Run(() =>
             {
@@ -99,15 +91,14 @@ namespace MyMovies
 
             Task.WaitAll(getSecondDictionary, getDirectorDictionary, getThirdDictionary);
 
-            using (var context = new ApplicationContext())
+            using (var context = new ApplicationContext(true))
             {
                 foreach (var movie in firstDictionary)
                 {
                     context.Movies.Add(movie.Value);
                 }
+                context.SaveChanges();
             }
-            int aa = 5;
-            a++;
         }
     }
 }

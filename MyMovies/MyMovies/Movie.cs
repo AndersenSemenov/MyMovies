@@ -5,19 +5,20 @@ using System.Text;
 
 namespace MyMovies
 {
-    class Movie
+    public class Movie
     {
         [Key]
         public string Id { get; set; }
         public string Name { get; set; }
         public double Rating { get; set; }
-        public HashSet<Person> Actors { get; set; }
-        public Person Director { get; set; }
+        public HashSet<Actor> Actors { get; set; }
+        public Director Director { get; set; }
         public HashSet<Tag> Tags { get; set; }
+        public string TopTen { get; set; }
 
         public Movie() { }
 
-        public Movie(string id, string name, double rating, HashSet<Person> actors, Person director, HashSet<Tag> tags)
+        public Movie(string id, string name, double rating, HashSet<Actor> actors, Director director, HashSet<Tag> tags)
         {
             Id = id;
             Name = name;

@@ -7,16 +7,19 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    public class Person
+    public abstract class Person
     {
         [Key]
+        public string Id { get; set; }
         public string Name { get; set; }
-
-        //public HashSet<Movie> actorMovies { get; set; }
+        public HashSet<Movie> Movies { get; set; }
 
         public Person() { }
 
-        public Person(string name)
-            => Name = name;
+        public Person(string id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
     }
 }
