@@ -19,8 +19,8 @@ namespace MyMovies
         public static MovieCodes movieCodes = new MovieCodes();
 
         public static ConcurrentDictionary<string, Movie> firstDictionary = new ConcurrentDictionary<string, Movie>();
-        public static ConcurrentDictionary<Person, HashSet<Movie>> secondDictionary = new ConcurrentDictionary<Person, HashSet<Movie>>();
-        public static ConcurrentDictionary<Person, HashSet<Movie>> directorDictionary = new ConcurrentDictionary<Person, HashSet<Movie>>();
+        public static ConcurrentDictionary<Actor, HashSet<Movie>> secondDictionary = new ConcurrentDictionary<Actor, HashSet<Movie>>();
+        public static ConcurrentDictionary<Director, HashSet<Movie>> directorDictionary = new ConcurrentDictionary<Director, HashSet<Movie>>();
         public static ConcurrentDictionary<Tag, HashSet<Movie>> thirdDictionary = new ConcurrentDictionary<Tag, HashSet<Movie>>();
 
         public static void GetDictionaries()
@@ -43,9 +43,9 @@ namespace MyMovies
 
             Task getSecondDictionary = Task.Run(() =>
             {
-                foreach(var item in firstDictionary)
+                foreach (var item in firstDictionary)
                 {
-                    foreach(var actor in item.Value.Actors)
+                    foreach (var actor in item.Value.Actors)
                     {
                         secondDictionary.AddOrUpdate(actor, new HashSet<Movie>(new Movie[] { item.Value }),
                             (x, y) =>
@@ -61,20 +61,23 @@ namespace MyMovies
             {
                 foreach (var item in firstDictionary)
                 {
-                    directorDictionary.AddOrUpdate(item.Value.Director, new HashSet<Movie>(new Movie[] { item.Value }),
+                    if (item.Value.Director != null)
+                    {
+                        directorDictionary.AddOrUpdate(item.Value.Director, new HashSet<Movie>(new Movie[] { item.Value }),
                         (x, y) =>
                         {
                             y.Add(item.Value);
                             return y;
                         });
+                    }
                 }
             });
 
             Task getThirdDictionary = Task.Run(() =>
             {
-                foreach(var item in firstDictionary)
+                foreach (var item in firstDictionary)
                 {
-                    foreach(var tag in item.Value.Tags)
+                    foreach (var tag in item.Value.Tags)
                     {
                         thirdDictionary.AddOrUpdate(tag, new HashSet<Movie>(new Movie[] { item.Value }),
                             (x, y) =>
@@ -87,6 +90,20 @@ namespace MyMovies
             });
 
             Task.WaitAll(getSecondDictionary, getDirectorDictionary, getThirdDictionary);
+
+            Parallel.ForEach(firstDictionary, item =>
+            {
+                item.Value.GetTopTen();
+            });
+
+            using (var context = new ApplicationContext())
+            {
+                foreach (var movie in firstDictionary)
+                {
+                    context.Movies.Add(movie.Value);
+                }
+                context.SaveChanges();
+            }
         }
     }
 }

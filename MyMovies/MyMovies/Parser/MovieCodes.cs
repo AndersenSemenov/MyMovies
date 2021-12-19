@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class MovieCodes : DataParser<string, Movie> // key --- movieName, value --- movie
+    class MovieCodes : DataParser<string, Movie> // key --- IMDB_Id, value --- movie
     {
         public MovieCodes() : base('\t', @"D:\data\ml-latest (1)\ml-latest\MovieCodes_IMDB.tsv") { }
 
         protected override void ParseData()
         {
             Regex regex = new Regex("\ten|ru\t");
+
             foreach (var line in inputFileStrings.GetConsumingEnumerable())
             {  
                 if (regex.IsMatch(line))
@@ -33,13 +34,14 @@ namespace MyMovies
                         var director = Process.actorDirectorCodes.directorDict.ContainsKey(IMDB_Id) 
                             ? Process.actorDirectorCodes.directorDict[IMDB_Id] : null;
 
-                        dict.AddOrUpdate(movieName,
+                        dict.AddOrUpdate(IMDB_Id,
                             new Movie
-                            (movieName,
+                            (IMDB_Id,
+                            movieName,
                             Process.ratings.dict[IMDB_Id],
                             Process.actorDirectorCodes.dict[IMDB_Id],
                             director,
-                            Process.tagScores.dict[IMDB_Id]), 
+                            Process.tagScores.dict[IMDB_Id]),
                             (x, y) => y);
                     }
                 }

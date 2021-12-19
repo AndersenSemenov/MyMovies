@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    class ActorDirectorCodes: DataParser<string, HashSet<Person>> // gets set of actors and director from the id of the movie
+    class ActorDirectorCodes: DataParser<string, HashSet<Actor>> // gets set of actors and director from the id of the movie
     {
-        public ConcurrentDictionary<string, Person> directorDict = new ConcurrentDictionary<string, Person>();
+        public ConcurrentDictionary<string, Director> directorDict = new ConcurrentDictionary<string, Director>();
         public ActorDirectorCodes(): base('\t', @"D:\data\ml-latest (1)\ml-latest\ActorsDirectorsCodes_IMDB.tsv") { }
 
         protected override void ParseData()
@@ -23,7 +23,7 @@ namespace MyMovies
                 var fourthIndex = line.IndexOf(spliter, thirdIndex + 1);
 
                 var category = line.Substring(thirdIndex + 1, fourthIndex - thirdIndex - 1);
-                if (category == "actor")
+                if (category == "actor" || category == "actress")
                 {
                     var IMDB_Id = line.Substring(0, firstIndex);
                     var actor_Id = line.Substring(secondIndex + 1, thirdIndex - secondIndex - 1);
@@ -31,7 +31,7 @@ namespace MyMovies
                     if (Process.actorDirectorNames.dict.ContainsKey(actor_Id))
                     {
                         dict.AddOrUpdate(IMDB_Id,
-                        new HashSet<Person>(new Person[] { Process.actorDirectorNames.dict[actor_Id] }),
+                        new HashSet<Actor>(new Actor[] { Process.actorDirectorNames.dict[actor_Id] }),
                         (x, y) =>
                         {
                             y.Add(Process.actorDirectorNames.dict[actor_Id]);
@@ -46,7 +46,7 @@ namespace MyMovies
 
                     if (Process.actorDirectorNames.dict.ContainsKey(director_Id))
                     {
-                        directorDict.AddOrUpdate(IMDB_Id, Process.actorDirectorNames.dict[director_Id], (x, y) => y);
+                        directorDict.AddOrUpdate(IMDB_Id, Process.actorDirectorNames.directorsDict[director_Id], (x, y) => y);
                     }
                 }
             }

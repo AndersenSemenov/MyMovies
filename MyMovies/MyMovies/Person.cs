@@ -1,16 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MyMovies
 {
-    public class Person
+    public abstract class Person
     {
-        public string Name { get; private set; }
+        [Key]
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public HashSet<Movie> Movies { get; set; }
 
-        public Person(string name)
-            => Name = name;
+        public Person() { }
+
+        public Person(string id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
     }
 }
