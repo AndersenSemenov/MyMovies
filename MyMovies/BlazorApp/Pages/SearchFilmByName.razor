@@ -1,0 +1,28 @@
+﻿@page "/searchfilmbyname"
+@page "/searchfilmbyname/{valueSearch}"
+
+
+<h3>Страница поиска фильма по названию</h3>
+
+<div class="input-group">
+    <input type="text" class="form-control rounded" placeholder="Search" aria-label="Search"
+           aria-describedby="search-addon" @bind="ValueSearch" />
+    <button @onclick="Func" type="button" class="btn btn-outline-primary">Search</button>
+</div>
+
+
+
+
+@code {
+    [Parameter]
+    public string? ValueSearch { get; set; }
+
+
+
+    public void Func()
+    {
+        NavigationManager.NavigateTo($"/searchfilmbyname/{ValueSearch}");
+    }
+
+}
+
