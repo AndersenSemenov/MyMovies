@@ -1,0 +1,148 @@
+﻿@page "/searchfilmbyname"
+@page "/searchfilmbyname/{valueSearch}"
+@inject NavigationManager NavigationManager
+@using BlazorApp.Models
+@using Microsoft.EntityFrameworkCore
+
+<h3>Страница поиска фильма по названию</h3>
+
+<div class="input-group">
+    <input type="text" class="form-control rounded" placeholder="Search" aria-label="Search"
+           aria-describedby="search-addon" @bind="ValueSearch" />
+    <button @onclick="() => Search()" type="button" class="btn btn-outline-primary">Search</button>
+</div>
+
+@if (myMovie != null)
+{
+    <div style="margin-bottom: 40px" class="col col-lg-4">
+        <div class="card h-100">
+            <div type="div" class="card-body">
+                <h5 type="textH5" class="card-title">@myMovie.Name</h5>
+                <img src=@Image
+                     class="card-img-top"
+                     style="object-fit:contain; height: 250px">
+                <p type="textP" class="card-text" align="center">
+                    Rating: @myMovie.Rating <br>
+                    <br>
+                    Actors:
+                    @if (myMovie.Actors.Count != 0)
+                    {
+                    <p>
+                        @foreach (var actor in myMovie.Actors)
+                        {
+                            @(actor.Name + ", ")
+                        }
+                    </p>
+                    }
+                    Director:
+                    @if (myMovie.Director != null)
+                    {
+                        <p>@myMovie.Director.Name</p>
+                    }
+                    else
+                    {
+                        <p>Нет режиссера</p>
+                    }
+                    Tags:
+                    @if (myMovie.Tags.Count != 0)
+                    {
+                        <p>
+                            @foreach (var tag in myMovie.Tags)
+                            {
+                                @(tag.Value + ", ")
+                            }
+                        </p>
+                    }
+                    <p>@Image</p>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+    @foreach (var movie in SimilarToMyMovie)
+    {
+        if (movie != null)
+        {
+                            <div style="margin-bottom: 40px" class="col col-lg-4">
+                                <div class="card h-100">
+                                    <div type="div" class="card-body">
+                                        <a @onclick="() => GetMoviesAsync(movie.Name)">@movie.Name</a>
+                                    </div>
+                                </div>
+                            </div>
+        }
+    }
+</div>
+}
+
+@code {
+    [Parameter]
+    public string? ValueSearch { get; set; }
+    public Movie myMovie { get; set; } = null;
+    public List<Movie> SimilarToMyMovie { get; set; } = new List<Movie>();
+    public string Image = "https://www.p-etalon.ru/global/images/prod/nophoto.png";
+
+
+    public async Task Search()
+    {
+        NavigationManager.NavigateTo($"/searchfilmbyname/{ValueSearch}");
+        await GetMoviesAsync(ValueSearch);
+    }
+
+    public async Task GetMoviesAsync(string Name)
+    {
+        try
+        {
+            var db = new ApplicationContext();
+            myMovie = db.Movies.Include(m => m.Actors).
+                    Include(m => m.Director).Include(m => m.Tags).Where(m => m.Name.ToLower() == Name.ToLower()).Single();
+
+            if (myMovie != null)
+            {
+                Image = "https://www.p-etalon.ru/global/images/prod/nophoto.png";
+                await GetImageAsync(myMovie.Id);
+                SimilarToMyMovie.Clear();
+                foreach (var movieId in myMovie.TopTen.Split(' '))
+                {
+                    SimilarToMyMovie.Add(db.Movies.Include(m => m.Actors).
+                    Include(m => m.Director).Include(m => m.Tags).FirstOrDefault(movie => movie.Id == movieId));
+                }
+            }
+            db.Dispose();
+        }
+        catch
+        {
+
+        }
+    }
+
+    public async Task GetImageAsync(string ttconst)
+    {
+        var client = new HttpClient();
+        var request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = new Uri($"https://imdb8.p.rapidapi.com/title/auto-complete?q={ttconst}"),
+            Headers =
+            {
+                { "x-rapidapi-key", "c52a1ca29amsh6bfb99e075210f4p19de50jsn9d875c09c921" },
+                { "x-rapidapi-host", "imdb8.p.rapidapi.com" },
+            },
+        };
+        using (var response = await client.SendAsync(request))
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            try
+            {
+                int startIndex = body.IndexOf("https");
+                int endIndex = body.IndexOf("width", startIndex);
+                Image = body.Substring(startIndex, (endIndex - startIndex) - 3);
+            }
+            catch
+            {
+                Image = "https://www.p-etalon.ru/global/images/prod/nophoto.png";
+            }
+        }
+    }
+}
