@@ -3,18 +3,18 @@
 
 @page "/tagDetails/{tagValue}"
 
-<h3>tagDetails</h3>
-<div align="center" class="container">
-    @if (tag != null)
-    {
+@if (tag != null)
+{
+    <h3>tagDetails: @tag.Value</h3>
+    <div align="left" class="container">
         <ul>
             @foreach (var movie in tag.Movies)
             {
-                <li><a href="">@movie.Name</a></li>
+                <li><a href="/searchfilmbyname/@movie.Name">@movie.Name</a></li>
             }
         </ul>
-    }
-</div>
+    </div>
+}
 
 @code {
     [Parameter]

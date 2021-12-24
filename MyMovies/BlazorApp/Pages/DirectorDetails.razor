@@ -3,18 +3,18 @@
 
 @page "/directorDetails/{directorId}"
 
-<h3>DirectorDetails</h3>
-<div align="center" class="container">
-    @if (director != null)
-    {
+@if (director != null)
+{
+    <h3>DirectorDetails: @director.Name</h3>
+    <div align="left" class="container">
         <ul>
             @foreach (var movie in director.Movies)
             {
-                <li>@movie.Name</li>
+                <li><a href="/searchfilmbyname/@movie.Name">@movie.Name</a></li>
             }
         </ul>
-    }
-</div>
+    </div>
+}
 
 @code {
     [Parameter]

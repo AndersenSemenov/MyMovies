@@ -13,72 +13,68 @@
 </div>
 
 <div align="center" class="container">
-    @if (IsMovie)
+    @if (myMovie != null)
     {
-        @if (myMovie != null)
-        {
-            <div style="margin-bottom: 40px" class="col col-lg-4">
-                <div class="card h-100">
-                    <div type="div" class="card-body">
-                        <h5 type="textH5" class="card-title">@myMovie.Name</h5>
-                        <img src=@Image
-                             class="card-img-top"
-                             style="object-fit:contain; height: 250px">
-                        <p type="textP" class="card-text" align="center">
-                            Rating: @myMovie.Rating <br>
-                            <br>
-                            Actors:
-                            @if (myMovie.Actors.Count != 0)
+        <div style="margin-bottom: 40px" class="col col-lg-4">
+            <div class="card h-100">
+                <div type="div" class="card-body">
+                    <h5 type="textH5" class="card-title">@myMovie.Name</h5>
+                    <img src=@Image
+                         class="card-img-top"
+                         style="object-fit:contain; height: 250px">
+                    <p type="textP" class="card-text" align="center">
+                        Rating: @myMovie.Rating <br>
+                        <br>
+                        Actors:
+                        @if (myMovie.Actors.Count != 0)
+                        {
+                        <p>
+                            @foreach (var actor in myMovie.Actors)
                             {
+                                <a href="/actorDetails/@actor.Id"> @(actor.Name + ", ")</a>
+                            }
+                        </p>
+                    }
+                        Director:
+                        @if (myMovie.Director != null)
+                        {
+                            <p><a href="/directorDetails/@myMovie.Director.Id">@myMovie.Director.Name</a></p>
+                        }
+                        else
+                        {
+                            <p>Нет режиссера</p>
+                        }
+                        Tags:
+                        @if (myMovie.Tags.Count != 0)
+                        {
                             <p>
-                                @foreach (var actor in myMovie.Actors)
+                                @foreach (var tag in myMovie.Tags.Take(25))
                                 {
-                                    <a href="/actorDetails/@actor.Id"> @(actor.Name + ", ")</a> //@onclick="() => GetActor(actor.Name)"
+                                    <a href="/tagDetails/@tag.Value">@(tag.Value + ", ")</a>
                                 }
                             </p>
-                            }
-                            Director:
-                            @if (myMovie.Director != null)
-                            {
-                                <p><a href="/directorDetails/@myMovie.Director.Id">@myMovie.Director.Name</a></p>
-                            }
-                            else
-                            {
-                                <p>Нет режиссера</p>
-                            }
-                            Tags:
-                            @if (myMovie.Tags.Count != 0)
-                            {
-                                <p>
-                                    @foreach (var tag in myMovie.Tags)
-                                    {
-                                        <a href="/tagDetails/@tag.Value">@(tag.Value + ", ")</a>
-                                    }
-                                </p>
-                            }
-                            <p>@Image</p>
-                            </p>
-                        </div>
+                        }
+                        </p>
                     </div>
                 </div>
+            </div>
 
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
-                    @foreach (var movie in SimilarToMyMovie)
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+                @foreach (var movie in SimilarToMyMovie)
+                {
+                    if (movie != null && movie.Name != myMovie.Name)
                     {
-                        if (movie != null)
-                        {
-                            <div style="margin-bottom: 40px" class="col col-lg-4">
-                                <div class="card h-100">
-                                    <div type="div" class="card-body">
-                                        <a @onclick="() => GetMoviesAsync(movie.Name)">@movie.Name</a>
-                                    </div>
+                        <div style="margin-bottom: 40px" class="col col-lg-4">
+                            <div class="card h-100">
+                                <div type="div" class="card-body">
+                                    <a @onclick="() => GetMoviesAsync(movie.Name)">@movie.Name</a>
                                 </div>
                             </div>
-                        }
+                        </div>
                     }
-                </div>
-            }
-    }
+                }
+            </div>
+        }
 </div>
 
     @code {
@@ -87,9 +83,6 @@
         public Movie myMovie { get; set; } = null;
         public List<Movie> SimilarToMyMovie { get; set; } = new List<Movie>();
         public string Image = "https://www.p-etalon.ru/global/images/prod/nophoto.png";
-        public Actor Actor = null;
-        bool IsMovie = true;
-
 
         public async Task Search()
         {
@@ -101,7 +94,6 @@
         {
             try
             {
-                IsMovie = true;
                 using (var db = new ApplicationContext())
                 {
                     myMovie = db.Movies.Include(m => m.Actors).
