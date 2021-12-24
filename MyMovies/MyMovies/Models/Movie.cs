@@ -32,9 +32,9 @@ namespace MyMovies
         public void GetTopTen()
         {
             Dictionary<string, double> similarFilms = new Dictionary<string, double>();
-            foreach(var item in Process.firstDictionary)
+            foreach (var item in Process.firstDictionary)
             {
-                similarFilms.Add(item.Key, MethodCompare(item.Value));               
+                similarFilms.Add(item.Key, MethodCompare(item.Value));
             }
             var k = similarFilms.OrderByDescending(item => item.Value).Take(10).Select(item => item.Key + " ").ToList<string>();
             foreach (var str in k)
@@ -51,7 +51,7 @@ namespace MyMovies
             {
                 similarK += 0.5;
             }
-            
+
             var tagIntersectionSize = 0;
             foreach (var tag in this.Tags)
             {
@@ -68,10 +68,5 @@ namespace MyMovies
 
             return similarK;
         }
-        
-        
-        
-        
-        // енайти фильм по актеру, по директору, по тегу, по имени фильма, топ 10 похожих
     }
 }

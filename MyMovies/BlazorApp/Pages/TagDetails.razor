@@ -1,0 +1,38 @@
+﻿@using BlazorApp.Models
+@using Microsoft.EntityFrameworkCore
+
+@page "/tagDetails/{tagValue}"
+
+@if (tag != null)
+{
+    <h3>tagDetails: @tag.Value</h3>
+    <div align="left" class="container">
+        <ul>
+            @foreach (var movie in tag.Movies)
+            {
+                <li><a href="/searchfilmbyname/@movie.Name">@movie.Name</a></li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string tagValue { get; set; }
+
+    public Tag tag { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Method();
+    }
+
+    public async Task Method()
+    {
+        using (var db = new ApplicationContext())
+        {
+            tag = db.Tags.Include(t => t.Movies).Where(t => t.Value == tagValue).Single();
+        }
+    }
+}
+}
