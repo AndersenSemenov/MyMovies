@@ -1,0 +1,37 @@
+﻿@using BlazorApp.Models
+@using Microsoft.EntityFrameworkCore
+
+@page "/directorDetails/{directorId}"
+
+<h3>DirectorDetails</h3>
+<div align="center" class="container">
+    @if (director != null)
+    {
+        <ul>
+            @foreach (var movie in director.Movies)
+            {
+                <li>@movie.Name</li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string directorId { get; set; }
+
+    public Director director { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Method();
+    }
+
+    public async Task Method()
+    {
+        using (var db = new ApplicationContext())
+        {
+            director = db.Directors.Include(d => d.Movies).Where(d => d.Id == directorId).Single();
+        }
+    }
+}

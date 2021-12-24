@@ -33,14 +33,14 @@
                             <p>
                                 @foreach (var actor in myMovie.Actors)
                                 {
-                                    <a href="" @onclick="() => GetActor(actor.Name)"> @(actor.Name + ", ")</a>
+                                    <a href="/actorDetails/@actor.Id"> @(actor.Name + ", ")</a> //@onclick="() => GetActor(actor.Name)"
                                 }
                             </p>
-                        }
+                            }
                             Director:
                             @if (myMovie.Director != null)
                             {
-                                <p>@myMovie.Director.Name</p>
+                                <p><a href="/directorDetails/@myMovie.Director.Id">@myMovie.Director.Name</a></p>
                             }
                             else
                             {
@@ -52,7 +52,7 @@
                                 <p>
                                     @foreach (var tag in myMovie.Tags)
                                     {
-                                        @(tag.Value + ", ")
+                                        <a href="/tagDetails/@tag.Value">@(tag.Value + ", ")</a>
                                     }
                                 </p>
                             }
@@ -78,32 +78,6 @@
                     }
                 </div>
             }
-    }
-    else
-    {
-        <div align="center" class="container">
-            <div style="margin-bottom: 40px" class="col col-lg-4">
-                <div class="card h-100">
-                    <div type="div" class="card-body">
-                        <h5 type="textH5" class="card-title"><a href="">@Actor.Name</a></h5>
-                        <p type="textP" class="card-text" align="left">
-                            <br>
-                            Films:
-                            @if (Actor.Movies != null)
-                            {
-                                <ul>
-                                    @foreach (var movie in Actor.Movies)
-                                    {
-                                        <li>@movie.Name</li> //<a href="" @onclick="() => GetMoviesAsync(movie.Name)">
-                                    }
-                                </ul>
-                            }
-                        </p>
-                    </div>
-                    @*<button class="btn btn-primary btn-lg" @onclick="ShowCard">Show/Hide</button>*@
-                </div>
-            </div>
-        </div>
     }
 </div>
 
@@ -152,16 +126,6 @@
             }
         }
 
-        public async Task GetActor(string actorName)
-        {
-            NavigationManager.NavigateTo($"/searchfilmbyname/{actorName}");
-            using (var db = new ApplicationContext())
-            {
-                Actor = db.Actors.Include(a => a.Movies).Where(a => a.Name == actorName).Single();
-            }
-            IsMovie = false;
-        }
-
         public async Task GetImageAsync(string ttconst)
         {
             var client = new HttpClient();
@@ -170,10 +134,10 @@
                 Method = HttpMethod.Get,
                 RequestUri = new Uri($"https://imdb8.p.rapidapi.com/title/auto-complete?q={ttconst}"),
                 Headers =
-            {
-                { "x-rapidapi-key", "c52a1ca29amsh6bfb99e075210f4p19de50jsn9d875c09c921" },
-                { "x-rapidapi-host", "imdb8.p.rapidapi.com" },
-            },
+                {
+                    { "x-rapidapi-key", "c52a1ca29amsh6bfb99e075210f4p19de50jsn9d875c09c921" },
+                    { "x-rapidapi-host", "imdb8.p.rapidapi.com" },
+                },
             };
             using (var response = await client.SendAsync(request))
             {
